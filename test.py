@@ -22,7 +22,7 @@ with open("regions.json", "r") as file:
 
 # Create the choropleth map
 fig_region = px.choropleth(
-    df_dashboard,  # replace df with your DataFrame
+    df,  # replace df with your DataFrame
     geojson=regions_data,
     locations='nom_region',  # replace 'id' with the column name containing the regions' ids
     color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
