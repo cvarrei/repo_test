@@ -69,7 +69,7 @@ app.layout = html.Div([
     ),
     
     # Afficher la valeur foncière
-    html.Div(id="valeur-fonciere-output")
+    html.Div(id="valeur-fonciere-output"),
 
      dcc.Graph(
         id='example-graph',
