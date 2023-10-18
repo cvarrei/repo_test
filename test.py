@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
@@ -19,6 +20,9 @@ df.loc[df["nom_region"] == "Grand Est", "nom_region"] = "Grand-Est"
 
 with open("regions.json", "r") as file:
     regions_data = json.load(file)
+
+with open("departement.json", "r") as file:
+    dep_data = json.load(file)
 
 # Create the choropleth map
 fig_region = px.choropleth(
@@ -44,10 +48,34 @@ fig_region.update_layout(
     margin={"r":0,"t":40,"l":0,"b":0}
 )
 
-# Show the map
-fig_region.show()
+# Create the choropleth map
+fig_dep = px.choropleth(
+    df_dashboard,  # replace df with your DataFrame
+    geojson=dep_data,
+    locations='nom_departement',  # replace 'id' with the column name containing the regions' ids
+    color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
+    color_continuous_scale='Inferno',
+    featureidkey="properties.libgeo",  # replace 'properties.id' with the path to the ids in the geojson
+    range_color=[30000, 300000]
+)
 
-app = dash.Dash(__name__)
+# Update the geos layout to focus on France
+fig_dep.update_geos(
+    center={"lat": 46.603354, "lon": 1.888334},  # Coordinates of France's centroid
+    projection_scale=15,  # Adjust the scale to fit France
+    visible=False  # Hide the base map
+)
+
+# Update the layout
+fig_dep.update_layout(
+    
+    title="Choropleth Map of France",
+    margin={"r":0,"t":40,"l":0,"b":0}
+)
+
+
+
+app = dash.Dash(__name__,external_stylesheets=[dbc.themes.DARKLY])
 server=app.server
 
 # Définir la mise en page de l'interface utilisateur
@@ -70,26 +98,16 @@ app.layout = html.Div([
     
     # Afficher la valeur foncière
     html.Div(id="valeur-fonciere-output"),
-
-     dcc.Graph(
-        id='example-graph',
-        figure=fig_region
-    )
+    
+    dbc.Row(
+                [
+                    dbc.Col(dcc.Graph(figure=fig_region), width=6),
+                    dbc.Col(dcc.Graph(figure=fig_dep), width=6),
+                ]
+            )
     
 ])
-
-# Créez une fonction de rappel pour mettre à jour la valeur foncière en fonction des filtres sélectionnés
-@app.callback(
-    Output("valeur-fonciere-output", "children"),
-    [Input("annee-dropdown", "value"), Input("region-dropdown", "value")]
-)
-def update_valeur_fonciere(selected_annees, selected_regions):
-    filtered_data = df[(df["year"].isin(selected_annees)) & (df["nom_region"].isin(selected_regions))]
-    valeur_fonciere = filtered_data["Valeur fonciere"].mean()  # Vous pouvez utiliser une autre méthode de consolidation si nécessaire
-    return f"Valeur foncière totale : {valeur_fonciere}"
-
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
