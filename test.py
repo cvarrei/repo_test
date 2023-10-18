@@ -56,7 +56,7 @@ fig_region.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1))
 
 # Create the choropleth map
 fig_dep = px.choropleth(
-    df_dashboard,  # replace df with your DataFrame
+    df,  # replace df with your DataFrame
     geojson=dep_data,
     locations='nom_departement',  # replace 'id' with the column name containing the regions' ids
     color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
