@@ -10,7 +10,7 @@ L'Application ImmoPred est une application développée pour explorer les donné
 
 - **Modèle de Prédiction** : Utilisez notre modèle de prédiction pour estimer la valeur foncière de n'importe quel bien immobilier en fournissant quelques informations essentielles. Obtenez des estimations précises pour vos futurs investissements ou l'évaluation de biens immobiliers existants.
 
-- **Tableaux de Bord Graphiques** : L'interface Dash de l'application propose une variété de tableaux de bord graphiques (KPI) pour visualiser les données clés du marché immobilier en France. Suivez les tendances des prix, l'évolution des quartiers, les taux de location et bien plus encore.
+- **Tableaux de Bord Graphiques** : L'interface Dash de l'application propose une variété de tableaux de bord graphiques (KPI) pour visualiser les données clés du marché immobilier en France. Suivez les tendances des prix, l'évolution des départements et régiosn et bien plus encore.
 
 ## Comment Utiliser l'Application
 
