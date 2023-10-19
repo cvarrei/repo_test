@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import dash
 from dash import callback
 import dash_core_components as dcc
@@ -437,7 +436,6 @@ def switch_layout(btn1, btn2):
         return regions_layout
 if __name__ == '__main__':
     app.run_server(debug=True)
-=======
 import dash
 from dash import callback
 import dash_core_components as dcc
@@ -860,4 +858,3 @@ def switch_layout(btn1, btn2):
         return regions_layout
 if __name__ == '__main__':
     app.run_server(debug=True)
->>>>>>> df961c2f8937379a95be9392abccfe520bd75773
