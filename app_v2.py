@@ -11,14 +11,19 @@ import json
 df=pd.read_csv("df_dash_dashboard.csv")
 
 ############### Nettoyage pour faciliter la représentation graphique
+
+# On modifie les types de données.
 df['month'] = pd.Categorical(df['month'], ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre'])
 df.sort_values(['month'], inplace=True)
 df["year"] = df["year"].astype(str)
+
+# On enlève tous les caractères spéciaux
 df = df.replace('Î', 'I', regex=True)
 df = df.replace('Ô', 'O', regex=True)
 df = df.replace('ô', 'o', regex=True)
 df= df.replace('é', 'e', regex=True)
 df = df.replace('è', 'e', regex=True)
+# On médifie les noms de régions pour harmoniser notre base de données agrégées avec notre document geojson.
 df.loc[df["nom_region"] == "Nouvelle-Aquitaine", "nom_region"] = "Nouvelle Aquitaine"
 df.loc[df["nom_region"] == "Grand Est", "nom_region"] = "Grand-Est"
 
@@ -29,43 +34,44 @@ with open("regions.json", "r") as file:
 with open("departement.json", "r") as file:
     dep_data = json.load(file)
 
-# Create the choropleth map
+# Création de la carte des régions
 fig_region = px.choropleth(
-    df,  # replace df with your DataFrame
-    geojson=regions_data,
-    locations='nom_region',  # replace 'id' with the column name containing the regions' ids
-    color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
-    color_continuous_scale='YlOrRd',
-    featureidkey="properties.libgeo",  # replace 'properties.id' with the path to the ids in the geojson
-    range_color=[100000, 250000]
+    df,  # Données des valeurs foncières
+    geojson=regions_data, # Documents Json pour créer la carte
+    locations='nom_region',  
+    color='Valeur fonciere',  # Valeur qui remplira chaque région
+    color_continuous_scale='YlOrRd', # Palette de couleurs
+    featureidkey="properties.libgeo",  # ids des régions dans le geojson
+    range_color=[100000, 250000] # Rang de valeurs pour la carte
 )
 fig_region.update_geos(
-    center={"lat": 45.8, "lon": 1.888334},  # Coordinates of France's centroid
-    projection_scale=17,  # Adjust the scale to fit France
-    visible=False  # Hide the base map
+    center={"lat": 45.8, "lon": 1.888334},  # Coordonnées où centrer la carte (centre de la france)
+    projection_scale=17,  # On ajust el'échelle pour être proche du pays
+    visible=False  # On enlève la carte du monde derrière
 )
 fig_region.update_layout(
-    paper_bgcolor="rgb(34,34,34)",
-    geo_bgcolor="rgb(34,34,34)",
-    coloraxis_showscale=False,
+    paper_bgcolor="rgb(34,34,34)", # On met le fond de la figure de la même couleur que le background de l'application
+    geo_bgcolor="rgb(34,34,34)", # On met le fond de la figure de la même couleur que le background de l'application
+    coloraxis_showscale=False, # On enlève la légende
     margin={"r":0,"t":40,"l":0,"b":0}
 )
-fig_region.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1))
+fig_region.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1)) # On mets les tracés de la même couleur que le background de l'application
 
 
+# On réalise ensuite les mêmes manipulations mais pour les départements
 fig_dep = px.choropleth(
     df,  # replace df with your DataFrame
     geojson=dep_data,
-    locations='nom_departement',  # replace 'id' with the column name containing the regions' ids
-    color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
+    locations='nom_departement', 
+    color='Valeur fonciere',  
     color_continuous_scale='YlOrRd',
-    featureidkey="properties.libgeo",  # replace 'properties.id' with the path to the ids in the geojson
+    featureidkey="properties.libgeo", 
     range_color=[30000, 300000]
 )
 fig_dep.update_geos(
-    center={"lat": 45.8, "lon": 1.888334},  # Coordinates of France's centroid
-    projection_scale=17,  # Adjust the scale to fit France
-    visible=False  # Hide the base map
+    center={"lat": 45.8, "lon": 1.888334},  
+    projection_scale=17,  
+    visible=False  
 )
 fig_dep.update_layout(
     paper_bgcolor="rgb(34,34,34)",
@@ -75,21 +81,25 @@ fig_dep.update_layout(
 )
 fig_dep.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1))
 
-################### Line plots regions 
-order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
-fig_month = px.line(df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_region')
-fig_month.update_layout(
-        legend_title="",
-        xaxis_title="Mois",
-        paper_bgcolor="rgb(34,34,34)",
-        plot_bgcolor="rgb(34,34,34)",
-        legend_font_color="white",
-        coloraxis_showscale=False
-    )
-fig_month.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
-fig_month.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
 
-fig_year = px.line(df, x="year", y="Valeur fonciere", color='nom_region')
+
+################### Line plots regions 
+
+# On précise l'ordre des mois
+order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
+fig_month = px.line(df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_region') # On crée le line plot pour afficher l'évolution mensuelle des régions
+fig_month.update_layout(
+        legend_title="", # On enlève le titre de la légende
+        xaxis_title="Mois", # On assigne le nom de l'axe x
+        paper_bgcolor="rgb(34,34,34)",  # On met le fond de la figure de la même couleur que le background de l'application
+        plot_bgcolor="rgb(34,34,34)", # On met le fond de la figure de la même couleur que le background de l'application
+        legend_font_color="white", # On change la couleur du texte de la légende
+    )
+
+fig_month.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white")) # On change la couleur du texte des axis et on enlève le grid
+fig_month.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white")) # On change la couleur du texte des axis et on enlève le grid
+
+fig_year = px.line(df, x="year", y="Valeur fonciere", color='nom_region')  # On réalise la même manipulation mais pour l'évolution anuelle.
 fig_year.update_layout(
     legend_title="",
     xaxis_title="Année",
@@ -102,6 +112,8 @@ fig_year.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"),
 fig_year.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
 
 ################### Line plots departements 
+
+# On réalise la même manipulation pour les départements
 order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
 fig_month_dep = px.line(df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_departement')
 fig_month_dep.update_layout(
@@ -130,9 +142,9 @@ fig_year_dep.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="whit
 
 ######## Dashboard
 title_style = {
-    'backgroundColor': 'tomato',  # Fire brick color
-    'color': 'white',  # Text color
-    'padding': '10px',  # Padding around the text
+    'backgroundColor': 'tomato', # Couleur du fond du titre
+    'color': 'white',  # Couleur du texte du titre
+    'padding': '10px',  # Padding autour du texte
     'textAlign': 'center',  # Center the text
     'marginBottom': '20px'  # Margin at the bottom to separate it from other content
 }
