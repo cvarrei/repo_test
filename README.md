@@ -83,10 +83,9 @@ L'Application ImmoPred est une application développée pour explorer les donné
 
 ## Auteur
 
-Ce projet a été développé par Adrien CASTEXT, Clovis VARANGOT-REILLE et Victor SIGOGNEAU.
+Ce projet a été développé par Adrien CASTEX, Clovis VARANGOT-REILLE et Victor SIGOGNEAU.
 
 ## Licence
-
-Ce projet est sous licence [indiquez la licence si applicable].
+Opensource 
 
 N'hésitez pas à contribuer ou à signaler des problèmes en créant une issue. Nous espérons que l'Application ImmoPred vous sera utile pour explorer le marché immobilier en France et pour effectuer des prédictions de valeur foncière.
