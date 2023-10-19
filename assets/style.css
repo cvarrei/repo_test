@@ -86,6 +86,7 @@
 
 .gradient-title {
     background: linear-gradient(to bottom,tomato, rgb(155, 40, 20));
+    font-weight:bold;
     color: white;
     padding: 10px;
     text-align: center;
