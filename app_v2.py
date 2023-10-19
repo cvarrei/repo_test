@@ -11,19 +11,15 @@ import json
 df=pd.read_csv("df_dash_dashboard.csv")
 
 ############### Nettoyage pour faciliter la représentation graphique
-
-# On modifie les types de données.
-df['month'] = pd.Categorical(df['month'], ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre'])
-df.sort_values(['month'], inplace=True)
 df["year"] = df["year"].astype(str)
-
-# On enlève tous les caractères spéciaux
 df = df.replace('Î', 'I', regex=True)
 df = df.replace('Ô', 'O', regex=True)
 df = df.replace('ô', 'o', regex=True)
 df= df.replace('é', 'e', regex=True)
 df = df.replace('è', 'e', regex=True)
-# On médifie les noms de régions pour harmoniser notre base de données agrégées avec notre document geojson.
+df = df.replace('û', 'u', regex=True)
+df['month'] = pd.Categorical(df['month'], ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'])
+df.sort_values(['month'], inplace=True)
 df.loc[df["nom_region"] == "Nouvelle-Aquitaine", "nom_region"] = "Nouvelle Aquitaine"
 df.loc[df["nom_region"] == "Grand Est", "nom_region"] = "Grand-Est"
 
@@ -34,72 +30,67 @@ with open("regions.json", "r") as file:
 with open("departement.json", "r") as file:
     dep_data = json.load(file)
 
-# Création de la carte des régions
+# Create the choropleth map
 fig_region = px.choropleth(
-    df,  # Données des valeurs foncières
-    geojson=regions_data, # Documents Json pour créer la carte
-    locations='nom_region',  
-    color='Valeur fonciere',  # Valeur qui remplira chaque région
-    color_continuous_scale='YlOrRd', # Palette de couleurs
-    featureidkey="properties.libgeo",  # ids des régions dans le geojson
-    range_color=[100000, 250000] # Rang de valeurs pour la carte
+    df,  # replace df with your DataFrame
+    geojson=regions_data,
+    locations='nom_region',  # replace 'id' with the column name containing the regions' ids
+    color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
+    color_continuous_scale='YlOrRd',
+    featureidkey="properties.libgeo",  # replace 'properties.id' with the path to the ids in the geojson
+    range_color=[100000, 250000]
 )
 fig_region.update_geos(
-    center={"lat": 45.8, "lon": 1.888334},  # Coordonnées où centrer la carte (centre de la france)
-    projection_scale=17,  # On ajust el'échelle pour être proche du pays
-    visible=False  # On enlève la carte du monde derrière
+    center={"lat": 45.8, "lon": 1.888334},  # Coordinates of France's centroid
+    projection_scale=17,  # Adjust the scale to fit France
+    visible=False  # Hide the base map
 )
 fig_region.update_layout(
-    paper_bgcolor="rgb(34,34,34)", # On met le fond de la figure de la même couleur que le background de l'application
-    geo_bgcolor="rgb(34,34,34)", # On met le fond de la figure de la même couleur que le background de l'application
-    coloraxis_showscale=False, # On enlève la légende
-    margin={"r":0,"t":40,"l":0,"b":0}
+    paper_bgcolor="rgb(34,34,34)",
+    geo_bgcolor="rgb(34,34,34)",
+    coloraxis_showscale=False,
+    margin={"r":0,"t":0,"l":0,"b":0}
 )
-fig_region.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1)) # On mets les tracés de la même couleur que le background de l'application
+fig_region.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1))
 
 
-# On réalise ensuite les mêmes manipulations mais pour les départements
 fig_dep = px.choropleth(
     df,  # replace df with your DataFrame
     geojson=dep_data,
-    locations='nom_departement', 
-    color='Valeur fonciere',  
+    locations='nom_departement',  # replace 'id' with the column name containing the regions' ids
+    color='Valeur fonciere',  # replace 'value' with the column name containing the values you want to plot
     color_continuous_scale='YlOrRd',
-    featureidkey="properties.libgeo", 
+    featureidkey="properties.libgeo",  # replace 'properties.id' with the path to the ids in the geojson
     range_color=[30000, 300000]
 )
 fig_dep.update_geos(
-    center={"lat": 45.8, "lon": 1.888334},  
-    projection_scale=17,  
-    visible=False  
+    center={"lat": 45.8, "lon": 1.888334},  # Coordinates of France's centroid
+    projection_scale=17,  # Adjust the scale to fit France
+    visible=False  # Hide the base map
 )
 fig_dep.update_layout(
     paper_bgcolor="rgb(34,34,34)",
     geo_bgcolor="rgb(34,34,34)",
     coloraxis_showscale=False,
-    margin={"r":0,"t":40,"l":0,"b":0}
+    margin={"r":0,"t":0,"l":0,"b":0}
 )
 fig_dep.update_traces(marker_line=dict(color="rgb(34,34,34)", width=1))
 
-
-
 ################### Line plots regions 
-
-# On précise l'ordre des mois
-order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
-fig_month = px.line(df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_region') # On crée le line plot pour afficher l'évolution mensuelle des régions
+order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
+fig_month = px.line(df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_region')
 fig_month.update_layout(
-        legend_title="", # On enlève le titre de la légende
-        xaxis_title="Mois", # On assigne le nom de l'axe x
-        paper_bgcolor="rgb(34,34,34)",  # On met le fond de la figure de la même couleur que le background de l'application
-        plot_bgcolor="rgb(34,34,34)", # On met le fond de la figure de la même couleur que le background de l'application
-        legend_font_color="white", # On change la couleur du texte de la légende
+        legend_title="",
+        xaxis_title="Mois",
+        paper_bgcolor="rgb(34,34,34)",
+        plot_bgcolor="rgb(34,34,34)",
+        legend_font_color="white",
+        coloraxis_showscale=False
     )
+fig_month.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
+fig_month.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
 
-fig_month.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white")) # On change la couleur du texte des axis et on enlève le grid
-fig_month.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white")) # On change la couleur du texte des axis et on enlève le grid
-
-fig_year = px.line(df, x="year", y="Valeur fonciere", color='nom_region')  # On réalise la même manipulation mais pour l'évolution anuelle.
+fig_year = px.line(df, x="year", y="Valeur fonciere", color='nom_region')
 fig_year.update_layout(
     legend_title="",
     xaxis_title="Année",
@@ -112,9 +103,7 @@ fig_year.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"),
 fig_year.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
 
 ################### Line plots departements 
-
-# On réalise la même manipulation pour les départements
-order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
+order_month = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre']
 fig_month_dep = px.line(df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_departement')
 fig_month_dep.update_layout(
         legend_title="",
@@ -142,9 +131,9 @@ fig_year_dep.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="whit
 
 ######## Dashboard
 title_style = {
-    'backgroundColor': 'tomato', # Couleur du fond du titre
-    'color': 'white',  # Couleur du texte du titre
-    'padding': '10px',  # Padding autour du texte
+    'backgroundColor': 'linear-gradient(to bottom, rgb(155, 40, 20), tomato)',  # Fire brick color
+    'color': 'white',  # Text color
+    'padding': '10px',  # Padding around the text
     'textAlign': 'center',  # Center the text
     'marginBottom': '20px'  # Margin at the bottom to separate it from other content
 }
@@ -152,12 +141,13 @@ title_style = {
 regions_layout = html.Div([dbc.Row([   
                     dbc.Col(dcc.Dropdown(
                             id="annee-dropdown",
-                            options=[{'label': str(annee), 'value': annee} for annee in df['year'].unique()]
+                            options=[{'label': str(annee), 'value': annee} for annee in sorted(df['year'].unique())],
+                            value="2018",
                         ), width=3),
                     
                     dbc.Col(dcc.Dropdown(
                             id="region-dropdown",
-                            options=[{'label': region, 'value': region} for region in df['nom_region'].unique()],
+                            options=[{'label': region, 'value': region} for region in sorted(df['nom_region'].unique())],
                             multi=True
                         ),width=3) 
                     ]),
@@ -174,49 +164,84 @@ regions_layout = html.Div([dbc.Row([
                             dcc.Graph(id='month-plot', figure=fig_month, style={"height": "50vh"})
                         ])
                     ]),
-                    dbc.Col(dcc.Graph(figure=fig_region, style={"height": "100vh"}), width=6)
+                    dbc.Col([
+            dbc.Row([
+                dbc.Col([
+                    html.Div(id='kpi1-reg-value', children='Initial KPI 1 Value'),
+                    html.P('Moyenne des valeurs foncières')
+                ], width=6),
+                dbc.Col([
+                    html.Div(id='kpi2-reg-value', children='Initial KPI 2 Value'),
+                    html.P('Nombre de ventes par an')
+                ], width=6),
+            ]),
+            dbc.Row([
+                dcc.Graph(figure=fig_region, style={"height": "100vh"})
+            ])
+        ], width=6)
                 ]
             )
 ])
 
-departments_layout = html.Div([dbc.Row([   
-                    dbc.Col(dcc.Dropdown(
-                            id="annee-dropdown",
-                            options=[{'label': str(annee), 'value': annee} for annee in df['year'].unique()]
-                        ), width=3),
-                    
-                    dbc.Col(dcc.Dropdown(
-                            id="departements-dropdown",
-                            options=[{'label': region, 'value': region} for region in df['nom_departement'].unique()],
-                            multi=True
-                        ),width=3) 
-                    ]),
-    # Afficher la valeur foncière
-    html.Div(id="valeur-fonciere-output"),
-    
-    dbc.Row(
-                [   
-                    dbc.Col([
-                        dbc.Row([
-                            dcc.Graph(id='year-plot', figure=fig_year_dep, style={"height": "50vh"})
-                        ]),
-                        dbc.Row([
-                            dcc.Graph(id='month-plot', figure=fig_month_dep, style={"height": "50vh"})
-                        ])
-                    ]),
-                    dbc.Col(dcc.Graph(figure=fig_dep, style={"height": "100vh"}), width=6)
-                ]
-            )
+departments_layout = html.Div([
+    dbc.Row([   
+        dbc.Col(dcc.Dropdown(
+                id="annee-dropdown",
+                options=[{'label': str(annee), 'value': annee} for annee in sorted(df['year'].unique())],
+                value="2018",
+            ), width=3),
+
+        dbc.Col(dcc.Dropdown(
+                id="departements-dropdown",
+                options=[{'label': department, 'value': department} for department in sorted(df['nom_departement'].unique())],
+                multi=True
+            ), width=3) 
+    ]),
+
+    dbc.Row([   
+        dbc.Col([
+            dbc.Row([
+                dcc.Graph(id='year-dep-plot', figure=fig_year_dep, style={"height": "50vh"})
+            ]),
+            dbc.Row([
+                dcc.Graph(id='month-dep-plot', figure=fig_month_dep, style={"height": "50vh"})
+            ])
+        ]),
+        dbc.Col([
+            dbc.Row([
+                dbc.Col([
+                    html.Div(id='kpi1-value', children='Initial KPI 1 Value'),
+                    html.P('Moyenne des valeurs foncières')
+                ], width=6),
+                dbc.Col([
+                    html.Div(id='kpi2-value', children='Initial KPI 2 Value'),
+                    html.P('Nombre de ventes par an')
+                ], width=6),
+            ]),
+            dbc.Row([
+                dcc.Graph(figure=fig_dep, style={"height": "100vh"})
+            ])
+        ], width=6)
+    ])
+])
+
+
+
+
+######### Interface Accueil
+accueil_layout = html.Div([
+    html.H2("Example Page"),
+    html.P("Lorem ipsum dolor sit amet")
 ])
 
 # Interface du dashboard
 dashboard_layout = html.Div([
-    html.H2("Interface pour la valeur foncière", style=title_style),
+    html.H2("Evolution des valeurs foncières", className="gradient-title"),
 
     dbc.Row([
-    dbc.Col(dbc.Button("Régions", id="btn-regions", n_clicks=0, style={"background-color": "firebrick", "border-color": "firebrick"}), width={"size": 2, "offset": 4}),
-    dbc.Col(dbc.Button("Départements", id="btn-departements", n_clicks=0, style={"background-color": "firebrick", "border-color": "firebrick"}), width=2)
-    ], justify="center"),
+        dbc.Col(dbc.Button("Régions", id="btn-regions", n_clicks=0, className="custom-button"), width="auto"),
+        dbc.Col(dbc.Button("Départements", id="btn-departements", n_clicks=0, className="custom-button"), width="auto")
+    ], justify="center", className="g-2 mb-4"),  # Added `no_gutters` to remove space between columns
 
     html.Div(id="contant-container") 
 ])
@@ -231,14 +256,20 @@ prediction_layout = html.Div([
 ######### Menu Latéral
 sidebar = html.Div([
     dbc.Nav(
-        [
-            dbc.NavLink("Dashboard", href="/", active="exact"),
+        [   
+            html.Img(src="/assets/logo.png", height="200px"),
+            html.Div("SARDE IMMO", className="sidebar-text"),
+            html.Div("AGENCY", className="sidebar-text2"),
+            dbc.NavLink("Accueil", href="/", active="exact"),
+            dbc.NavLink("Dashboard", href="/dashboard", active="exact"),
             dbc.NavLink("Prediction", href="/prediction", active="exact")
         ], 
         vertical=True,
-        pills=True,
+        pills=True, 
+        fill=True,
+        className="rounded-navbar"
         ),
-    ], style={"width":"15%", "position":"fixed", "height": "100%", "background-color": "lightgrey"}
+    ], style={"width":"15%", "position":"fixed", "height": "100%", "background-color": "#FAFAFA"}
 )
 
 
@@ -258,10 +289,12 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
         [Input("url", "pathname")]
 )
 def render_page_content(pathname):
-    if pathname == "/prediction":
-        return prediction_layout
-    else:
+    if pathname == "/":
+        return accueil_layout
+    elif pathname == "/dashboard":
         return dashboard_layout
+    elif pathname == "/prediction":
+        return prediction_layout
 
 @app.callback(
     Output('month-plot', 'figure'),  # id of the month plot Graph component and property to update
@@ -272,8 +305,6 @@ def update_month_plot(selected_year, selected_regions):
     # Check if regions are selected; if not, display for all regions.
     if not selected_regions:
         selected_regions = df['nom_region'].unique()
-    if not selected_year:
-        selected_year="2018"
 
     filtered_df = df[(df['year'] == selected_year) & (df['nom_region'].isin(selected_regions))]
     grouped_df = filtered_df.groupby(['nom_region',"month"])['Valeur fonciere'].mean().reset_index()
@@ -320,6 +351,60 @@ def update_year_plot(selected_regions):
     return fig_year_updated
 
 @app.callback(
+    Output('month-dep-plot', 'figure'),  # id of the month plot Graph component and property to update
+    Input('annee-dropdown', 'value'),  # id of the year dropdown and property to get
+    Input('departements-dropdown', 'value')  # id of the region dropdown and property to get
+)
+def update_month_dep_plot(selected_year, selected_dep):
+    # Check if regions are selected; if not, display for all regions.
+    if not selected_dep:
+        selected_dep = df['nom_departement'].unique()
+
+    filtered_df = df[(df['year'] == selected_year) & (df['nom_departement'].isin(selected_dep))]
+    grouped_df = filtered_df.groupby(['nom_departement',"month"])['Valeur fonciere'].mean().reset_index()
+    fig_month_dep_updated = px.line(grouped_df, x="month", y="Valeur fonciere", category_orders={'month': order_month}, color='nom_departement')
+    
+    fig_month_dep_updated.update_layout(
+        legend_title="",
+        xaxis_title="Mois",
+        paper_bgcolor="rgb(34,34,34)",
+        plot_bgcolor="rgb(34,34,34)",
+        legend_font_color="white",
+        coloraxis_showscale=False
+    )
+    fig_month_dep_updated.update_xaxes(type='category',gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
+    fig_month_dep_updated.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
+    
+    return fig_month_dep_updated
+
+@app.callback(
+    Output('year-dep-plot', 'figure'),  # id of the year plot Graph component and property to update
+    Input('departements-dropdown', 'value')  # id of the region dropdown and property to get
+)
+def update_year_plot_dep(selected_dep):
+    # Check if regions are selected; if not, display for all regions.
+    if not selected_dep:
+        selected_dep = df['nom_departement'].unique()
+
+    filtered_df = df[df['nom_departement'].isin(selected_dep)]
+    grouped_df = filtered_df.groupby(['year', 'nom_departement'])['Valeur fonciere'].mean().reset_index()
+    fig_year_dep_updated = px.line(grouped_df, x="year", y="Valeur fonciere", color='nom_departement')
+    
+    fig_year_dep_updated.update_layout(
+        legend_title="",
+        xaxis_title="Année",
+        paper_bgcolor="rgb(34,34,34)",
+        plot_bgcolor="rgb(34,34,34)",
+        legend_font_color="white",
+        coloraxis_showscale=False
+    )
+ 
+    fig_year_dep_updated.update_xaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
+    fig_year_dep_updated.update_yaxes(gridcolor='rgb(34,34,34)', title_font=dict(color="white"), tickfont=dict(color="white"))
+    
+    return fig_year_dep_updated
+
+@app.callback(
     Output("contant-container", "children"),
     [Input("btn-regions", "n_clicks"),
     Input("btn-departements", "n_clicks")]
@@ -329,7 +414,7 @@ def switch_layout(btn1, btn2):
     change_dash = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if "btn-regions" in change_dash:
         return regions_layout
-    elif "btn_departements" in change_dash:
+    elif "btn-departements" in change_dash:
         return departments_layout
     else:
         return regions_layout
