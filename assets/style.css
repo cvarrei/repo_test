@@ -123,3 +123,17 @@
     justify-content: center; /* Horizontally center content */
     align-items: center;     /* Vertically center content */
 }
+
+.custom-h2-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 45px  !important;
+    font-weight: bold;
+    color: tomato;
+    margin-bottom: 50px; /* add space below the H2 title */
+}
+.custom-h3-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 24px  !important;
+    font-weight: bold;
+    color: rgb(226, 142, 127);
+}
