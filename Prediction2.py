@@ -22,35 +22,34 @@ def norme(df):
 
 def preproc(tl,sr,nbpp,st,te,nom_departement):
     
-    if(te=="y"):
+     if(te=="y"):
         te=True
     else:
         te=False
-    
     data=pd.DataFrame([[tl,sr,nbpp,st,te,nom_departement]],columns=["Type local","Surface reelle bati","Nombre pieces principales","Surface terrain","exterieur","nom_departement"])
 
-    # Concatenation de l'open data
+        # Concatenation de l'open data
     df=pd.read_excel("Data/pop_active.xlsx")
     df=norme(df)
-    data["pop_active"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["pop_active"]
-    
+    data = pd.merge(data, df, on="nom_departement", how="left")
+        
     df=pd.read_excel("Data/base-cc-bases-tous-salaries-2021.xlsx")
     df=norme(df)
-    data["salaire_moyen"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["salaire_moyen"]
-    
+    data = pd.merge(data, df, on="nom_departement", how="left")
+
     df=pd.read_excel("Data/ecoles2.xlsx")
     df=norme(df)  
-    data["nb_etab_elem"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["nb_etab_elem"]
-    
-    df=pd.read_csv("Data/m2.csv")
+    data = pd.merge(data, df, on="nom_departement", how="left")
+        
+    df=pd.read_csv("Data/m2 copy.csv")
     df=norme(df)   
-    data["mean_prixm2"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["mean_prixm2"]
-    data["q1_prixm2"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["q1_prixm2"]
-    data["q3_prixm2"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["q3_prixm2"]
+    data = pd.merge(data, df, on="nom_departement", how="left")
 
     df=pd.read_csv("Data/nbre_ventes.csv")
     df=norme(df)
-    data["Total_Mutations"]=df.loc[df['nom_departement'] == data["nom_departement"][0]]["Total_Mutations"]
+    data = pd.merge(data, df, on="nom_departement", how="left")
+
+    data.drop(columns=["code_departement"], inplace=True)
 
     return data
 
