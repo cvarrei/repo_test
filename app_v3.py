@@ -278,6 +278,7 @@ options_exterieur = [
     {'label': 'n', 'value': 'n'}
 ]
 
+
 prediction_layout = html.Div([
     html.H2('Prédisez le prix de votre bien', className="gradient-title"),
     dbc.Row([   # Start of the row containing two columns
@@ -306,10 +307,10 @@ prediction_layout = html.Div([
             )
         ], width=6),   # End of the first column with width 6
         dbc.Col([dbc.Row([html.P(id="annonce-pred", children="La valeur estimé du bien est de ")]),
-                 dbc.Row([html.P(id='output-texte', children="En attente")], width=6)   # Second column with width 6
-    ])  # End of the row
+                 dbc.Row([html.P(id='output-texte', children="En attente")])   # Second column with width 6
+    ], width=6)  # End of the row
+    ])
 ])
-
 
 
 ######### Menu Latéral
