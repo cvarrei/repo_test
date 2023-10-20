@@ -7,6 +7,9 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
 import json
+import numpy as np
+from Prediction import preproc, pred
+from sklearn.base import TransformerMixin
 
 df=pd.read_csv("df_dash_dashboard.csv")
 
@@ -264,11 +267,39 @@ dashboard_layout = html.Div([
     html.Div(id="contant-container") 
 ])
 
+
+options = [
+    {'label': 'Maison', 'value': 'Maison'},
+    {'label': 'Appartement', 'value': 'Appartement'},
+    {'label': 'Dépendance', 'value': 'Dépendance'}
+]
 ######### Interface Prédiction
 prediction_layout = html.Div([
-    html.H2("Example Page"),
-    html.P("Lorem ipsum dolor sit amet")
+    html.H1('Mon Tableau de Bord Dash'),
+    html.Label('Nombre de lot'),# Titre des inputs
+    dcc.Input(id='nlot', type='number', value=0),
+    html.Label('Type local :'),
+    dcc.Dropdown(
+        id='tl',
+        options=options,
+        value='Maison'  # Option sélectionnée par défaut
+    ),
+    html.Label('surface reele bati'),
+    dcc.Input(id='sr', type='number', value=0),
+    html.Label('Nombre de pieces principales :'),
+    dcc.Input(id='nbpp', type='number', value=0),
+    html.Label('Surface terrain :'),
+    dcc.Input(id='st', type='number', value=0),
+    html.Label("Presence d'un terrain exterieur (y/n) :"),
+    dcc.Input(id='te', type='text', value="n" , placeholder='Entrez votre texte ici...'),# Champ de saisie numérique
+    html.Label("Nom du departement :"),
+    dcc.Input(id='nom_region', type='text', value="Ain" , placeholder='Entrez votre texte ici...'),# Champ de saisie numérique
+    html.Button('Lancement de la prediction', id='mon-bouton'),
+    html.Div(id='output-texte')  # Div pour afficher le résultat
 ])
+
+
+
 
 
 ######### Menu Latéral
@@ -502,5 +533,52 @@ def switch_layout(btn1, btn2):
         return departments_layout
     else:
         return regions_layout
+
+
+@app.callback(
+    Output('output-texte', 'children'),
+    [Input('nlot', 'value'),
+     Input('tl', 'value'),
+     Input('sr', 'value'),
+     Input('nbpp', 'value'),
+     Input('st', 'value'),
+     Input('te', 'value'),
+     Input('nom_region', 'value'),
+     Input('mon-bouton','n_clicks')]
+)
+
+def mettre_a_jour_output(nlot,tl,sr,nbpp,st,te,nom_departement,n_clicks):
+    n=None
+    if n_clicks!=n:
+        data=preproc(nlot,tl,sr,nbpp,st,te,nom_departement)
+        res=pred(data)
+        out=f"La valeur estimé du bien est de : {res}"
+        n=n_clicks
+
+    else:
+        out="En attente"
+    # {res}
+    return out
+
+
+
+
+
 if __name__ == '__main__':
+    class Qual_Standardize(TransformerMixin):
+        # On standardize les valeurs qualitatives en utilisant la racine carré de p_k.
+        def __init__(self):
+            self.p_k = None
+        # Notre fit calcule la valeur p_k nécessaire à la transformation.
+        def fit(self, X, y=None):
+            qual_int = X.astype(int)
+            # On calcule la valeur p_k comme la proportion de True dans la colonne
+            self.p_k = np.sum(qual_int, axis=0) / qual_int.shape[0]
+            return self
+        def transform(self, X, y=None):
+            qual_int = X.astype(int)    
+            # On transforme chaque valeur du tableau disjonctif complet par la racine carré de p_k
+            qual_trans = qual_int / (np.sqrt(self.p_k))
+
+            return qual_trans
     app.run_server(debug=True)
