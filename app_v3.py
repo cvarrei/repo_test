@@ -270,7 +270,8 @@ dashboard_layout = html.Div([
 options_type_bien = [
     {'label': 'Maison', 'value': 'Maison'},
     {'label': 'Appartement', 'value': 'Appartement'},
-    {'label': 'Dépendance', 'value': 'Dépendance'}
+    {'label': 'Dépendance', 'value': 'Dépendance'},
+    {'label': 'local', 'value': 'local'}
 ]
 
 options_exterieur = [

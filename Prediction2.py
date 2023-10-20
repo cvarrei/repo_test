@@ -22,7 +22,7 @@ def norme(df):
 
 def preproc(tl,sr,nbpp,st,te,nom_departement):
     
-     if(te=="y"):
+    if(te=="y"):
         te=True
     else:
         te=False
@@ -56,6 +56,7 @@ def preproc(tl,sr,nbpp,st,te,nom_departement):
 
 
 def pred(data):
+    pd.set_option('display.max_columns', None)
     print(data)
     if (data["Type local"][0]=="Maison"):
         data.drop(columns="Type local", inplace=True)
@@ -87,4 +88,23 @@ def pred(data):
         with open("Model/dependance_model.pkl", 'rb') as file_reg:
             regression_dep = pickle.load(file_reg)
         predi=regression_dep.predict(datat)
+
+    elif (data["Type local"][0]=="local"):
+        print("oui")
+        data.drop(columns="Type local", inplace=True)
+        print("oui")
+        data.drop(columns="nom_departement", inplace=True)
+        print("oui")
+        data.drop(columns="Nombre pieces principales", inplace=True)
+        data["estimated"] = data["Surface reelle bati"] * data["q1_prixm2"]
+        print("oui2")
+        with open("Model/local_model.pkl", 'rb') as file_reg:
+            regression_loc = pickle.load(file_reg)
+        print("oui3")
+        predi=regression_loc.predict(data)
+
+    print("#####################################")
+    print(predi)
+
+
     return predi
