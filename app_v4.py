@@ -13,7 +13,7 @@ from qualitative_prep import Qual_Standardize
 import numpy as np
 from sklearn.base import TransformerMixin
             
-df=pd.read_csv("df_dash_dashboard.csv") # On importe le jeux de données
+df=pd.read_csv("table_croisee.csv") # On importe le jeux de données
 
 ############### Nettoyage pour faciliter la représentation graphique ###############
 df["year"] = df["year"].astype(str) # On change le type de données des années
@@ -555,7 +555,7 @@ def update_region_plot(selected_year):
     color='Valeur fonciere',  
     color_continuous_scale='YlOrRd',
     featureidkey="properties.libgeo",  
-    range_color=[100000, 350000]
+    range_color=[100000, 250000]
     )
     fig_region.update_geos(
     center={"lat": 45.8, "lon": 5},  
@@ -594,7 +594,7 @@ def update_departement_plot(selected_year):
     color='Valeur fonciere',  
     color_continuous_scale='YlOrRd',
     featureidkey="properties.libgeo",  
-    range_color=[100000, 350000]
+    range_color=[100000, 250000]
     )
     fig_dep.update_geos(
     center={"lat": 45.8, "lon": 5},  
