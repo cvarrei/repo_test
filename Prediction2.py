@@ -10,6 +10,7 @@ from sklearn.decomposition import PCA as ACP
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
+from qualitative_prep import Qual_Standardize
 
 
 # On crée une fonction qui enlève les caractères spéciaux
