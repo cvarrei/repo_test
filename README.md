@@ -1,5 +1,7 @@
 # Application ImmoPred - Prédiction de la Valeur Foncière en France
 
+![Alt text](assets/logo.png) 
+
 Venez l'essayer sur : https://immopred-app.onrender.com/
 
 ## Contexte
@@ -21,11 +23,14 @@ L'Application ImmoPred est une application développée pour explorer les donné
    - Utilisez `pip` pour installer les dépendances en exécutant `pip install -r requirements.txt`.
 
 2. **Lancement de l'Application** :
-   [En LOCAL]
-   - Exécutez l'application en utilisant `python app_v4.py` en s'assurant que le fichier de l'application se trouve bien dans un dossier similaire à celui sur Github.
-   - Accédez à l'application en ouvrant un navigateur web et en visitant l'URL `http://localhost:8050`.
-   [En LIGNE]
-   - L'application a été déployé sur Render.com:  https://immopred-app.onrender.com/
+   
+   - [En LOCAL] Créer un environnement virtuel et s'assurer que les librairies ont bien été installées.
+   - [En LOCAL] Activer l'environnement virtuel et se positioner dans le dossier de l'application.
+   - [En LOCAL] Exécutez l'application en utilisant `python app_v4.py` en ligne de commande en s'assurant que le fichier de l'application se trouve bien dans un dossier similaire à celui sur Github.
+   - [En LOCAL] Accédez à l'application en ouvrant un navigateur web et en visitant l'URL `http://127.0.0.1:8050`.
+   
+   - [En LIGNE] L'application a été déployé sur Render.com:  https://immopred-app.onrender.com/
+
 4. **Explorer les Données** :
    - Utilisez les tableaux de bord pour explorer les données immobilières en France.
    - Sélectionnez différentes visualisations pour obtenir des informations pertinentes sur le marché.
