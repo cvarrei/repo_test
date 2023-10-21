@@ -96,7 +96,7 @@ def pred(data):
             regression_dep = pickle.load(file_reg)
         predi=regression_dep.predict(datat)
 
-    elif (data["Type local"][0]=="local"):
+    elif (data["Type local"][0]=="Local"):
         data.drop(columns="Type local", inplace=True)
         data.drop(columns="nom_departement", inplace=True)
         data.drop(columns="Nombre pieces principales", inplace=True)
