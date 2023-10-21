@@ -721,10 +721,8 @@ def mettre_a_jour_output(n_clicks,  tl, sr, nbpp, st, te, nom_departement):
     else:
         return "En attente"
 
-if __name__ == '__main__':
-
-    # On ajoute un objet qui nous permet de standardiser les variables catégoriques one-hot encodées.
-    class Qual_Standardize(TransformerMixin):
+# On ajoute un objet qui nous permet de standardiser les variables catégoriques one-hot encodées.
+class Qual_Standardize(TransformerMixin):
         # On standardize les valeurs qualitatives en utilisant la racine carré de p_k.
         def __init__(self):
             self.p_k = None
@@ -740,6 +738,7 @@ if __name__ == '__main__':
             qual_trans = qual_int / (np.sqrt(self.p_k))
 
             return qual_trans
-    
+            
+if __name__ == '__main__':
     # On lance le serveur.
     app.run_server(debug=True)
