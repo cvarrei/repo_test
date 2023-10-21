@@ -68,7 +68,7 @@ def pred(data):
     if (data["Type local"][0]=="Maison"):
         data.drop(columns="Type local", inplace=True)
         data["estimated"] = data["Surface reelle bati"] * data["q3_prixm2"]
-        with open("Model/maison_preprocessing.pkl", 'rb') as file_prep:
+        with open("Model/maison_preprocessing2.pkl", 'rb') as file_prep:
             preprocessing_maison = pickle.load(file_prep)
         datat=preprocessing_maison.transform(data)
         with open("Model/maison_model.pkl", 'rb') as file_reg:
@@ -78,7 +78,7 @@ def pred(data):
     elif (data["Type local"][0]=="Appartement"):
         data.drop(columns="Type local", inplace=True)
         data["estimated"] = data["Surface reelle bati"] * data["q3_prixm2"]
-        with open("Model/appartement_preprocessing.pkl", 'rb') as file_prep:
+        with open("Model/appartement_preprocessing2.pkl", 'rb') as file_prep:
             preprocessing_app = pickle.load(file_prep)
         datat=preprocessing_app.transform(data)
         with open("Model/appartement_model.pkl", 'rb') as file_reg:
@@ -89,7 +89,7 @@ def pred(data):
         data.drop(columns="Type local", inplace=True)
         data.drop(columns="Surface reelle bati", inplace=True)
         data.drop(columns="Nombre pieces principales", inplace=True)
-        with open("Model/dependance_preprocessing.pkl", 'rb') as file_prep:
+        with open("Model/dependance_preprocessing2.pkl", 'rb') as file_prep:
             preprocessing_dep = pickle.load(file_prep)
         datat=preprocessing_dep.transform(data)
         with open("Model/dependance_model.pkl", 'rb') as file_reg:
