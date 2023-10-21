@@ -1,6 +1,8 @@
 # Application ImmoPred - Prédiction de la Valeur Foncière en France
 
-![Alt text](assets/logo.png) 
+<p align="center">
+<img src="assets/logo.png" alt="Alt text" width="300"/>
+</p>
 
 Venez l'essayer sur : https://immopred-app.onrender.com/
 
