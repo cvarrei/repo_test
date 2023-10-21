@@ -1,6 +1,6 @@
 dash == 2.14.0
 numpy
-sklearn
+scikit-learn == 1.0.2
 pandas
 plotly
 dash_bootstrap_components
