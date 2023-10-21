@@ -98,7 +98,6 @@ def pred(data):
 
     elif (data["Type local"][0]=="Local"):
         data.drop(columns="Type local", inplace=True)
-        data.drop(columns="nom_departement", inplace=True)
         data.drop(columns="Nombre pieces principales", inplace=True)
         data["estimated"] = data["Surface reelle bati"] * data["q1_prixm2"]
         with open("Model/local_model.pkl", 'rb') as file_reg:
