@@ -47,7 +47,7 @@ def preproc(tl,sr,nbpp,st,te,nom_departement):
     df=norme(df)  
     data = pd.merge(data, df, on="nom_departement", how="left")
         
-    df=pd.read_csv("Data/m2 copy.csv")
+    df=pd.read_csv("Data/m2.csv")
     df=norme(df)   
     data = pd.merge(data, df, on="nom_departement", how="left")
 
