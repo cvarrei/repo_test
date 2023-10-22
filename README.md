@@ -40,6 +40,9 @@ L'Application ImmoPred est une application développée pour explorer les donné
 5. **Faire des Prédictions** :
    - Accédez à l'espace de prédiction et fournissez les informations requises pour estimer la valeur foncière d'un bien immobilier.
 
+Une documentation utilisateur est disponible [ici](https://github.com/cvarrei/repo_test/blob/main/documentation_utilisateur.pdf) pour faciliter la compréhension de chaque items de l'application.
+
+
 ## Technologies Utilisées
 
 - Python
