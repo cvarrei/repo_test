@@ -9,8 +9,7 @@
 }
 
 /* Couleurs pour le menu déroulant */
-#annee-dropdown .Select-menu-outer, 
-#departements-dropdown .Select-option {
+#annee-dropdown .Select-menu-outer {
     background-color:  rgb(156, 93, 81, 0.7) !important;
     color: white;
 }
