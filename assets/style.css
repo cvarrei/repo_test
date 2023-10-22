@@ -54,6 +54,11 @@
     border: 1px solid rgba(255, 102, 0, 0.534) !important; 
 }
 
+#departements-dropdown .Select-menu-outer {
+    background-color: rgb(156, 93, 81, 0.7) !important;
+    color: white;
+}
+
 /* Styles pour d'autres dropdowns (tl, te, nom_departement) */
 #tl .Select-value .Select-value-label,
 #te .Select-value .Select-value-label,
